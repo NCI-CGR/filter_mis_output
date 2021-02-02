@@ -1,0 +1,19 @@
+name: filter_mis_output-env
+dependencies:
+  - boost-cpp
+  - finter
+  - zlib
+  - bzip2
+  - git
+# required for commitizen
+  - nodejs
+  - pre-commit
+  - cppcheck
+  - sarcasm::clang-format
+
+
+  - libtool
+  - automake
+  - autoconf
+  - make>=4.2
+  - gxx_linux-64>=8.2.0
