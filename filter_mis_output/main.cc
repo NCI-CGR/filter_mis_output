@@ -1,11 +1,11 @@
-#include <string>
-#include <vector>
-#include <iostream>
 #include <fstream>
-#include <sstream>
+#include <iostream>
 #include <map>
-#include <utility>
+#include <sstream>
 #include <stdexcept>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "filter_mis_output/cargs.h"
 #include "filter_mis_output/utilities.h"
@@ -31,31 +31,30 @@ int main(int argc, char **argv) {
     if (chromosome) target_chromosomes[chromosome] = true;
     if (chromosome_lower_bound || chromosome_upper_bound) {
       for (unsigned i = (chromosome_lower_bound ? chromosome_lower_bound : 1);
-	   i <= (chromosome_upper_bound ? chromosome_upper_bound : 22);
-	   ++i) {
-	target_chromosomes[i] = true;
+           i <= (chromosome_upper_bound ? chromosome_upper_bound : 22); ++i) {
+        target_chromosomes[i] = true;
       }
     }
     for (std::vector<unsigned>::const_iterator iter = chromosome_list.begin();
-	 iter != chromosome_list.end();
-	 ++iter) {
-      if (*iter)
-	target_chromosomes[*iter] = true;
+         iter != chromosome_list.end(); ++iter) {
+      if (*iter) target_chromosomes[*iter] = true;
     }
-    std::cout << "reading variant inclusion data from file \"" << inclusion_list << "\"" << std::endl;
+    std::cout << "reading variant inclusion data from file \"" << inclusion_list
+              << "\"" << std::endl;
     filter_mis_output::load_mapped_variants(inclusion_list, inclusion_snps);
-    for (std::map<unsigned, bool>::const_iterator iter = target_chromosomes.begin();
-	 iter != target_chromosomes.end();
-	 ++iter) {
-      if (iter->first < 1 || iter->first > 22) continue;
+    for (std::map<unsigned, bool>::const_iterator iter =
+             target_chromosomes.begin();
+         iter != target_chromosomes.end(); ++iter) {
+      if (iter->first < 1 || iter->first > 23) continue;
       std::cout << "processing chromosome " << iter->first << std::endl;
       std::string chr = std::to_string(iter->first);
-      filter_mis_output::process_imputed_files(input_data_directory + "/chr" + chr + ".dose.vcf.gz",
-					       input_data_directory + "/chr" + chr + ".info.gz",
-					       inclusion_snps,
-					       ap.permit_file_desync(),
-					       output_data_directory + "/chr" + chr + "-filtered.dose.vcf.gz",
-					       output_data_directory + "/chr" + chr + "-filtered.info.gz");
+      if (chr.compare("23") == 0) chr = "X";
+      filter_mis_output::process_imputed_files(
+          input_data_directory + "/chr" + chr + ".dose.vcf.gz",
+          input_data_directory + "/chr" + chr + ".info.gz", inclusion_snps,
+          ap.permit_file_desync(),
+          output_data_directory + "/chr" + chr + "-filtered.dose.vcf.gz",
+          output_data_directory + "/chr" + chr + "-filtered.info.gz");
       std::cout << "\tcompleted chromosome " << iter->first << std::endl;
     }
     std::cout << "all done hooray!" << std::endl;
